@@ -25,3 +25,15 @@ BY 'Kurikulum@123';
 CREATE USER 'bagian_sarpras'@'localhost'
 IDENTIFIED WITH caching_sha2_password
 BY 'Sarpras@123';
+
+SELECT user, host, plugin
+FROM mysql.user
+WHERE user IN (
+  'db_sekolah_admin',
+  'kepala_sekolah',
+  'guru',
+  'murid',
+  'bagian_kesiswaan',
+  'bagian_kurikulum',
+  'bagian_sarpras'
+);
