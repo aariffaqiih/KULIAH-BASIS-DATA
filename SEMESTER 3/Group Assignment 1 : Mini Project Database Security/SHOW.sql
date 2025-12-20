@@ -1,4 +1,5 @@
--- Melihat privilege per user
+-- Menampilkan pernyataan GRANT resmi untuk setiap akun secara spesifik
+-- Digunakan untuk melihat izin mentah yang diberikan oleh administrator
 SHOW GRANTS FOR 'db_sekolah_admin'@'localhost';
 SHOW GRANTS FOR 'kepala_sekolah'@'localhost';
 SHOW GRANTS FOR 'guru'@'localhost';
@@ -7,10 +8,11 @@ SHOW GRANTS FOR 'bagian_kesiswaan'@'localhost';
 SHOW GRANTS FOR 'bagian_kurikulum'@'localhost';
 SHOW GRANTS FOR 'bagian_sarpras'@'localhost';
 
--- Melihat privilege user yang sedang login
+-- Menampilkan hak akses yang sedang aktif untuk sesi pengguna saat ini
 SHOW GRANTS;
 
--- Melihat semua user yang ada (validasi subject)
+-- Validasi keberadaan subjek (user) dalam sistem database
+-- Memastikan semua akun yang diperlukan sudah terdaftar di tabel mysql.user
 SELECT user, host
 FROM mysql.user
 WHERE user IN (
@@ -23,7 +25,8 @@ WHERE user IN (
     'bagian_sarpras'
 );
 
--- Privilege level database
+-- Memeriksa hak akses pada level Database (Global di db_sekolah)
+-- Menampilkan izin operasional dasar (CRUD) untuk semua user di database ini
 SELECT
     user,
     host,
@@ -35,7 +38,8 @@ SELECT
 FROM mysql.db
 WHERE Db = 'db_sekolah';
 
--- Privilege level tabel
+-- Memeriksa hak akses pada level Tabel secara mendetail
+-- Berguna untuk melihat tabel mana saja yang boleh diakses oleh user tertentu
 SELECT
     User,
     Host,
@@ -46,7 +50,8 @@ FROM mysql.tables_priv
 WHERE Db = 'db_sekolah'
 ORDER BY Table_name, User;
 
--- Privilege level kolom
+-- Memeriksa hak akses pada level Kolom (paling spesifik/granular)
+-- Memastikan field sensitif terlindungi dari user yang tidak berhak
 SELECT
     User,
     Host,
@@ -58,7 +63,8 @@ FROM mysql.columns_priv
 WHERE Db = 'db_sekolah'
 ORDER BY Table_name, Column_name, User;
 
--- Database-level privilege per user
+-- Rekapitulasi hak akses level database berdasarkan daftar user sekolah
+-- Memberikan ringkasan cepat mengenai siapa yang bisa melakukan apa di level DB
 SELECT
     user,
     host,
@@ -78,7 +84,8 @@ WHERE user IN (
     'bagian_sarpras'
 );
 
--- Table-level privilege per user
+-- Rekapitulasi hak akses level tabel berdasarkan daftar user sekolah
+-- Mengelompokkan izin tabel agar mudah dibaca per pengguna
 SELECT
     User,
     Host,
@@ -97,7 +104,8 @@ WHERE User IN (
 )
 ORDER BY User, Table_name;
 
--- Column-level privilege per user
+-- Audit khusus tingkat kolom untuk user 'guru'
+-- Memastikan guru hanya bisa melihat kolom yang diizinkan (misal: Nama & Kelas)
 SELECT
     User,
     Host,
